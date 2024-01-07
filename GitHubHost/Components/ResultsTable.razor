@@ -1,0 +1,65 @@
+﻿@using GitHubHost.Models
+
+
+<table class="table table-hover table-striped">
+
+    <thead class="table-info">
+        <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Description</th>
+            <th scope="col">Category</th>
+            <th scope="col">Date</th>
+            <th scope="col">Priority</th>
+            <th scope="col">Actions</th>
+        </tr>
+    </thead>
+
+    <tbody>
+
+        @if (thedata != null)
+        {
+            foreach (var item in thedata)
+            {
+                <tr>
+                    <td>@item.Name</td>
+                    <td>@item.Description</td>
+                    <td>@item.Category</td>
+                    <td>@item.Date</td>
+                    <td>@item.HighPriority</td>
+                    <td><div class="btn-group form-control-plaintext"><button class="btn btn-info" @onclick="() => Edit(item.Id)">Edit</button><button class="btn btn-danger" @onclick="() => Delete(item.Id)">Delete</button></div></td>
+                </tr>
+            }
+        }
+
+    </tbody>
+
+</table>
+
+
+
+@code {
+
+    [Parameter]
+    public List<FormData>? thedata { get; set; }
+
+    [Parameter]
+    public EventCallback<int> IdEdit { get; set; }
+
+    [Parameter]
+    public EventCallback<int> IdDelete { get; set; }
+
+
+    public int identification = 0;
+
+
+    private async Task Edit(int id)
+    {
+        await IdEdit.InvokeAsync(id);
+    }
+
+    private async Task Delete(int id)
+    {
+        await IdDelete.InvokeAsync(id);
+    }
+
+}

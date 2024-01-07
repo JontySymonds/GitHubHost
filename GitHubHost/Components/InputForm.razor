@@ -1,0 +1,137 @@
+﻿@using GitHubHost.Models
+@using static GitHubHost.Models.FormData
+
+
+<EditForm Model="InputData" OnValidSubmit="ValidSubmit">
+
+    <DataAnnotationsValidator />
+    
+    <ValidationSummary />
+
+    @if (success)
+    {
+        <div class="alert alert-success" role="alert">
+            Submitted @submissionName
+        </div>
+    }
+
+    <div class="form-group">
+        <label for="Name">Name:</label>
+        <InputText class="form-control" @bind-Value=InputData.Name />
+        <ValidationMessage For="() => InputData.Name" />
+    </div>
+    
+    <br />
+
+    <div class="form-group">
+        <label for="Description">Description:</label>
+        <InputTextArea class="form-control" @bind-Value=InputData.Description />
+        <ValidationMessage For="() => InputData.Description" />
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="Date">Date:</label>
+        <InputDate class="form-control" @bind-Value=InputData.Date />
+        <ValidationMessage For="() => InputData.Date" />
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="High Priority">High Priorty:</label>
+        <InputCheckbox class="form-check-input" @bind-Value=InputData.HighPriority />
+        <ValidationMessage For="() => InputData.HighPriority" />
+    </div>
+
+    <br />
+
+    <div class="form-group">
+        <label for="Category">Category:</label>
+        <InputSelect class="form-control" @bind-Value=InputData.Category>
+
+            <option selected="selected" hidden="hidden" disabled="disabled" value="error">Please Select</option>
+
+            @foreach(var option in Enum.GetValues(typeof(CategoryEnum)))
+            {
+                <option value="@option">@option</option>
+            }
+        </InputSelect>
+        <ValidationMessage For="() => InputData.Category" />
+    </div>
+
+    <br />
+
+    <ValidationSummary />
+
+    @if (success)
+    {
+        <div class="alert alert-success" role="alert">
+            Submitted @submissionName
+        </div>
+    }
+
+    <div class="btn-group form-control-plaintext">
+        
+        @if (Edit)
+        {
+            <button class="btn btn-primary" type="submit">Save Changes</button>
+        }
+        else
+        {
+            <button class="btn btn-primary" type="submit">Submit</button>
+            <button class="btn btn-warning" type="button" @onclick="ExampleData">Example Data</button>
+            <button class="btn btn-secondary" type="reset">Clear</button>
+        }
+
+    </div>
+
+</EditForm>
+
+
+@code {
+    [Parameter]
+    public FormData InputData { get; set; } = new();
+
+    bool success = false;
+    string submissionName = "";
+
+
+    [Parameter]
+    public bool Edit { get; set; } = false;
+
+
+    protected override void OnParametersSet()
+    {
+        if (InputData == null)
+        {
+            InputData = new();
+        }
+
+        base.OnInitialized();
+    }
+
+    [Parameter]
+    public EventCallback<FormData> Submission { get; set; }
+
+
+    private async Task ValidSubmit()
+    {
+        await Submission.InvokeAsync(InputData);
+        success = true;
+        submissionName = InputData.Name;
+        InputData = new();
+    }
+
+    private void ExampleData()
+    {
+        InputData.Name = "test123";
+        InputData.Description = "this is a test description 123456789";
+        InputData.Date = DateTime.Now;
+        InputData.HighPriority = false;
+        InputData.Category = CategoryEnum.category1;
+
+    }
+
+}

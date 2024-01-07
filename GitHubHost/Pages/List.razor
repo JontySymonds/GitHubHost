@@ -1,0 +1,73 @@
+﻿@page "/List"
+@using GitHubHost.Components
+@using GitHubHost.Models
+@inject HttpClient Http
+
+
+<h3>List</h3>
+
+<GitHubHost.Components.ResultsTable thedata="@thedata" IdEdit="OpenEditModal" IdDelete="OpenDeleteModal"/>
+
+<GitHubHost.Components.EditModal @ref="EModal" item="selectedItem" EditEvent="EditItem" />
+<GitHubHost.Components.DeleteModal @ref="DModal" item="selectedItem" DeleteEvent="DeleteItem"/>
+
+<hr />
+
+<h1>id: @testint</h1>
+
+@code {
+
+    public List<FormData>? thedata;
+    private FormData? selectedItem;
+
+    protected override async Task OnInitializedAsync()
+    {
+        thedata = await Http.GetFromJsonAsync<List<FormData>>("sample-data/jsonData.json");
+        //caching values??
+
+        base.OnInitialized();
+    }
+
+
+    private EditModal EModal;
+    private DeleteModal DModal;
+
+    private int testint = 0;
+
+    private void OpenEditModal(int id)
+    {
+        testint = id;
+
+        selectedItem = thedata?.FirstOrDefault(x => x.Id == id);
+
+        EModal.Open(selectedItem);
+
+    }
+
+    private void EditItem(FormData item)
+    {
+        var index = thedata.IndexOf(item);
+
+        thedata[index].Name = item.Name;
+        thedata[index].Description = item.Description;
+        thedata[index].Category = item.Category;
+        thedata[index].HighPriority = item.HighPriority;
+        thedata[index].Date = item.Date;
+    }
+
+    private void OpenDeleteModal(int id)
+    {
+        testint = id;
+
+        selectedItem = thedata?.FirstOrDefault(x => x.Id == id);
+
+        DModal.Open(selectedItem);
+
+    }
+
+    private void DeleteItem(FormData item)
+    {
+        thedata?.Remove(item);
+    }
+
+}

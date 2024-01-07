@@ -1,0 +1,65 @@
+﻿@page "/Form"
+@using GitHubHost.Models
+@using static GitHubHost.Models.FormData
+@inject HttpClient Http
+
+
+<PageTitle>Form</PageTitle>
+
+<h3>Form</h3>
+
+<hr />
+
+<GitHubHost.Components.InputForm Submission="ValidSubmit" />
+
+<br />
+
+@if (thedata != null)
+{
+    @foreach(var item in thedata)
+    {
+        <h2>@item?.Name</h2>
+        <h2>@item?.Description</h2>
+        <h2>@item?.Date</h2>
+        <h2>@item?.Category</h2>
+        <hr />
+    }
+}
+
+
+
+@code {
+    
+    FormData? InputData;
+
+    DateTime minDate = new DateTime(1970, 1, 1);
+
+    bool isSuccess = false;
+
+    public FormData[]? thedata;
+
+    protected override async Task OnInitializedAsync()
+    {
+        thedata = await Http.GetFromJsonAsync<FormData[]>("sample-data/jsonData.json");
+
+        base.OnInitialized();
+
+    }
+
+    public async void ValidSubmit(FormData InputData)
+    {
+        HttpResponseMessage response = await Http.PostAsJsonAsync("sample-data/jsonData.json", InputData);
+
+        response.EnsureSuccessStatusCode();
+
+        if (response.IsSuccessStatusCode)
+        {
+            isSuccess = true;
+        }
+        else
+        {
+            isSuccess = false;
+        }
+    }
+
+}
