@@ -40,7 +40,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        thedata = await Http.GetFromJsonAsync<FormData[]>("sample-data/jsonData.json");
+        //thedata = await Http.GetFromJsonAsync<FormData[]>("sample-data/jsonData.json");
 
         base.OnInitialized();
 
@@ -48,8 +48,9 @@
 
     public async void ValidSubmit(FormData InputData)
     {
-        HttpResponseMessage response = await Http.PostAsJsonAsync("sample-data/jsonData.json", InputData);
-
+        //HttpResponseMessage response = await Http.PostAsJsonAsync("sample-data/jsonData.json", InputData);
+        
+        /*
         response.EnsureSuccessStatusCode();
 
         if (response.IsSuccessStatusCode)
@@ -60,6 +61,7 @@
         {
             isSuccess = false;
         }
+        */
     }
 
 }
